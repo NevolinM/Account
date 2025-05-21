@@ -1,0 +1,21 @@
+﻿@model Disciplin
+
+<header>
+    <h1>Добавление дисциплины</h1>
+</header>
+<div class="container">
+    <form asp-action="Create_Disciplin" method="post" class="discipline-form">
+        <label>Название дисциплины:</label>
+        <input asp-for="Name" type="text" id="discipline-name" required />
+        <span asp-validation-for="Name"></span>
+
+        <label for="description">Описание:</label>
+        <textarea asp-for="Description" id="description" rows="4" required></textarea>
+        <span asp-validation-for="Description"></span>
+
+        <div class="button-container">
+            <button type="submit">Добавить дисциплину</button>
+            <button type="button" onclick="window.location.href='/Home/Disciplin'">Назад</button>
+        </div>
+    </form>
+</div>

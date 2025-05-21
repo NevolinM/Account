@@ -1,0 +1,252 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: Arial, sans-serif;
+    background-image: url('/images/background.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    position: relative;
+}
+
+body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(255, 255, 255, 0.7); /* Белый overlay с прозрачностью */
+        z-index: -1; /* Располагается под контентом */
+}
+
+header {
+    background-color: #3f51b5;
+    color: white;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+    header h1 {
+        font-size: 1.5rem;
+    }
+
+    header nav a {
+        color: white;
+        text-decoration: none;
+        margin-left: 1rem;
+        font-size: 1rem;
+    }
+
+label {
+    display: block;
+    margin: 0.5rem 0 0.25rem;
+    font-weight: bold;
+}
+
+input, textarea, button {
+    width: 100%;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+    input:focus, textarea:focus {
+        border-color: #3f51b5;
+        outline: none;
+        box-shadow: 0 0 5px rgba(63, 81, 181, 0.5);
+    }
+
+button {
+    background-color: #3f51b5;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+}
+
+    button:hover {
+        background-color: #303f9f;
+    }
+
+    button:active {
+        background-color: #1a237e;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) inset;
+    }
+
+.container {
+    max-width: 600px;
+    margin: 3rem auto;
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.class-card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+    .class-card h2 {
+        margin-bottom: 0.5rem;
+    }
+
+    .class-card p {
+        margin-bottom: 1rem;
+        color: #666;
+    }
+
+    .class-card button {
+        background-color: #3f51b5;
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+        .class-card button:hover {
+            background-color: #303f9f;
+        }
+
+.sidebar {
+    width: 250px;
+    background-color: #ffffff;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    height: 100%;
+    padding: 2rem 1rem;
+}
+
+    .sidebar a {
+        display: block;
+        margin-bottom: 1rem;
+        text-decoration: none;
+        color: #333;
+        font-size: 1.1rem;
+    }
+
+        .sidebar a:hover {
+            color: #3f51b5;
+        }
+
+.main-content {
+    margin-left: 270px;
+    padding: 2rem;
+}
+
+
+/* Стили для страницы авторизации */
+.login-container {
+    justify-content: center;
+    align-items: center;
+    max-width: 400px;
+    margin: 5rem auto;
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.login-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80px;
+    background-color: #3f51b5;
+    color: white;
+}
+
+    .login-header .icon {
+        width: 40px; /* Ширина изображения */
+        height: 40px; /* Высота изображения */
+        display: inline-block; /* Оставляем изображение в строке */
+    }
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+}
+
+    .login-form h2 {
+        text-align: center;
+        margin-bottom: 1.5rem;
+        color: #3f51b5;
+    }
+
+/* Стили для страницы добавления дисциплин */
+.disciplin-card {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+.discipline-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.button-container {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.discipline-form textarea {
+    resize: vertical;
+}
+
+.discipline-form button {
+    align-self: flex-end;
+    width: auto;
+    padding: 0.5rem 2rem;
+}
+
+.course-card {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+.footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #f8f9fa;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}

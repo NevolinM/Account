@@ -1,0 +1,33 @@
+﻿@{
+    ViewData["Title"] = "Авторизация";
+}
+
+<header class="login-header">
+    <img src="/images/DNTY.jpg" alt="Login Icon" class="icon">
+    <h1>Донецкий Национальный Технический Университет | Авторизация</h1>
+</header>
+@model Teacher
+
+<div class="login-container">
+    <h2>Авторизация</h2>
+    <form asp-action="Index" method="post" class="login-form">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    
+        <div>
+            <label asp-for="Login">Логин:</label>
+            <input asp-for="Login" id="login" />
+            <span asp-validation-for="Login" class="text-danger"></span>
+        </div>
+    
+        <div>
+            <label asp-for="Password">Пароль:</label>
+            <input asp-for="Password" id="password" type="password" />
+            <span asp-validation-for="Password" class="text-danger"></span>
+        </div>
+    
+        <button type="submit">Войти</button>
+    </form>
+</div>
+
+<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>

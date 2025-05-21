@@ -1,0 +1,48 @@
+﻿@{
+    ViewData["Title"] = "Личный кабинет преподавателя";
+}
+@if (ViewData["Message"] != null)
+{
+    <p>@ViewData["Message"]</p>
+}
+
+<header>
+    <h1>Личный кабинет преподавателя</h1>
+    <nav>
+        <a href="/">Профиль</a>
+        <a href="/Login">Выйти</a>
+    </nav>
+</header>
+<div class="sidebar">
+    <a href="/Home/Disciplin">Дисциплины</a>
+    <a href="/Home/Courses">Курсы</a>
+    <a href="/">Оповещения</a>
+    <a href="/">Отчетность</a>
+</div>
+
+@model List<Account.Models.Disciplin>
+<div class="main-content">
+    <div class="container">
+        <h2>Существующие дисциплины</h2> 
+        <div class="disciplin">
+            @if (Model != null && Model.Any()) 
+            {
+                @foreach (var disciplin in Model)
+                {
+                    <div class="class-card">
+                        <h2>@disciplin.Name</h2>
+                        <p>@disciplin.Description</p>
+                        <button type="submit">Детали</button>
+                    </div>
+                }
+            }
+            else
+            {
+                <p>Дисциплин не найдено.</p>
+            }
+        </div>
+    </div>
+</div>
+
+@*<a asp-action="DisciplinDetails" asp-route-id="@disciplin.Id" class="btn btn-primary">Детали</a>
+    *@

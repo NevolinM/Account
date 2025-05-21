@@ -1,0 +1,53 @@
+﻿@{
+    ViewData["Title"] = "Личный кабинет преподавателя";
+}
+
+<header>
+    <h1>Управление дисциплинами - Личный кабинет преподавателя | Дисциплины</h1>
+    <nav>
+        <a href="/">Главная</a>
+        <a href="/">Профиль</a>
+        <a href="/Login">Выйти</a>
+    </nav>
+</header>
+
+<div class="sidebar">
+    <a href="/Home/Disciplin">Дисциплины</a>
+    <a href="/Home/Courses">Курсы</a>
+    <a href="/">Оповещения</a>
+    <a href="/">Отчетность</a>
+
+    <div class="sidebar-actions">
+        <h3>Управление дисциплинами</h3>
+        <button class="action-button" id="create-discipline" onclick="window.location.href='/Disciplin/Create_Disciplin'">Создать дисциплину</button>
+
+        <form asp-action="DeleteDisciplin" asp-controller="Home" method="post">
+            <label for="Name" >Удалить дисциплину:</label>
+            <input type="text" id="Name" name="disciplineName" placeholder="Название дисциплины">
+            <button type="submit" class="action-button">Удалить</button>
+        </form>
+
+        <div class="input-group">
+            <label for="edit-course-name">Редактировать дисциплину</label>
+            <input type="text" id="edit-course-name" placeholder="Название дисциплины">
+            <button class="action-button" id="save-course">Редактировать</button>
+        </div>
+        <button class="action-button" id="generate-report">Создать отчетность</button>
+    </div>
+</div>
+
+@model List<Account.Models.Disciplin>
+<div class="main-content">
+    <div class="container">
+        <h2>Существующие дисциплины</h2>
+        <div class="disciplin">
+            @foreach (var disciplin in Model) 
+            { 
+                <div class="disciplin-card">
+                    <h3>Дисциплина: @disciplin.Name</h3>
+                    <p>Описание курса: @disciplin.Description</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>
