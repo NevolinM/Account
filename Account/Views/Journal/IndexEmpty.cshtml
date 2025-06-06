@@ -1,0 +1,27 @@
+﻿@{
+    ViewData["Title"] = "Журнал курса";
+    var disciplinName = (string)ViewData["DisciplinName"]!;
+    var disciplinId = (int)ViewData["DisciplinId"]!;
+}
+
+<header>
+    <h1>Журнал курса</h1>
+</header>
+
+<div class="container">
+    <h2>Журнал по дисциплине «@disciplinName» ещё не создан</h2>
+    <button type="button"
+            class="btn btn-primary"
+            onclick="window.open('@Url.Action("Create", "Journal", new { id = disciplinId })','_blank','width=400,height=525')">
+        Создать журнал
+    </button>
+    <button type="button"
+            onclick="
+                      if (document.referrer) {
+                        window.location = document.referrer;
+                      } else {
+                        window.location = '/Home/Index';
+                      }">
+        Назад
+    </button>
+</div>

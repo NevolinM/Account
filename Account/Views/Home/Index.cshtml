@@ -1,5 +1,8 @@
-﻿@{
+﻿@model List<Account.Models.Disciplin>
+@{
     ViewData["Title"] = "Личный кабинет преподавателя";
+    var nameClaim = User.FindFirst(System.Security.Claims.ClaimTypes.Name)?.Value;
+    var userName = !string.IsNullOrWhiteSpace(nameClaim) ? nameClaim : "Преподаватель";
 }
 @if (ViewData["Message"] != null)
 {
@@ -9,40 +12,130 @@
 <header>
     <h1>Личный кабинет преподавателя</h1>
     <nav>
-        <a href="/">Профиль</a>
-        <a href="/Login">Выйти</a>
+        <a asp-controller="User"
+           asp-action="Profile"
+           asp-route-returnUrl="@Url.Action(Context.Request.RouteValues["action"]?.ToString(), Context.Request.RouteValues)">Профиль</a>
+        <a asp-controller="Login" asp-action="Index">Выйти</a>
     </nav>
 </header>
+
 <div class="sidebar">
-    <a href="/Home/Disciplin">Дисциплины</a>
-    <a href="/Home/Courses">Курсы</a>
-    <a href="/">Оповещения</a>
-    <a href="/">Отчетность</a>
+    <ul class="nav flex-column">
+        <a href="/Home/Disciplin">Дисциплины</a>
+        <a href="/Home/Courses">Курсы</a>
+        <a class="nav-link opener" href="javascript:void(0);">
+            Отчетность
+        </a>
+        <ul class="submenu list-unstyled" style="display: none; padding-left: 1rem; margin-top: 0.5rem;">
+            @foreach (var d in Model)
+            {
+                <li class="nav-item">
+                    <a class="nav-link"
+                       href="@Url.Action("Report", "Disciplin", new { id = d.Id })">
+                        @d.Name
+                    </a>
+                </li>
+            }
+        </ul>
+        <a class="nav-link opener" href="javascript:void(0);">
+            Журнал курса
+        </a>
+        <ul class="submenu list-unstyled" style="display: none; padding-left: 1rem; margin-top: 0.5rem;">
+            @foreach (var d in Model)
+            {
+                <li class="nav-item">
+                    <a class="nav-link"
+                       href="@Url.Action("Index", "Journal", new { id = d.Id })">
+                        @d.Name
+                    </a>
+                </li>
+            }
+        </ul>
+    </ul>
 </div>
 
-@model List<Account.Models.Disciplin>
-<div class="main-content">
-    <div class="container">
-        <h2>Существующие дисциплины</h2> 
-        <div class="disciplin">
-            @if (Model != null && Model.Any()) 
-            {
-                @foreach (var disciplin in Model)
-                {
-                    <div class="class-card">
-                        <h2>@disciplin.Name</h2>
-                        <p>@disciplin.Description</p>
-                        <button type="submit">Детали</button>
-                    </div>
-                }
-            }
-            else
-            {
-                <p>Дисциплин не найдено.</p>
-            }
+<div class="container">
+    <h2 class="greeting">Здравствуйте, @userName</h2>
+	<hr />
+    <br />
+
+    <div class="card clock-card">
+        <div class="card-body">
+            <div id="clock" class="digital-clock">00:00:00</div>
+            <div id="todayDate" class="current-date mt-3"></div>
         </div>
     </div>
 </div>
 
-@*<a asp-action="DisciplinDetails" asp-route-id="@disciplin.Id" class="btn btn-primary">Детали</a>
-    *@
+<div class="container">
+    <header class="course-header">
+        <h2>Ваши дисциплины</h2>
+    </header>
+    <div class="disciplin">
+        @if (Model != null && Model.Any())
+        {
+            @foreach (var disciplin in Model)
+            {
+                <div class="disciplin-card">
+                    <h3>Дисциплина: @disciplin.Name</h3>
+                    <p>Описание курса: @disciplin.Description</p>
+                </div>
+                <hr />
+            }
+        }
+        else
+        {
+            <p>Дисциплин не найдено.</p>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Функция для форматированного вывода сегодняшней даты
+        function updateDate() {
+            const today = new Date();
+            const options = {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            };
+            const localeDate = today.toLocaleDateString('ru-RU', options);
+            document.getElementById('todayDate').textContent = capitalizeFirst(localeDate);
+        }
+
+        // Функция для живых часов (формат HH:MM:SS)
+        function updateClock() {
+            const now = new Date();
+            let hours   = now.getHours().toString().padStart(2, '0');
+            let minutes = now.getMinutes().toString().padStart(2, '0');
+            let seconds = now.getSeconds().toString().padStart(2, '0');
+            document.getElementById('clock').textContent = `${hours}:${minutes}:${seconds}`;
+        }
+
+        // Помогает делать первую букву прописной (для дня недели)
+        function capitalizeFirst(str) {
+            if (!str) return '';
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            updateDate();
+            updateClock();
+            setInterval(updateClock, 1000);
+        });
+
+        // Скрипт для открытия/закрытия submenus в sidebar
+        document.addEventListener("DOMContentLoaded", function() {
+          var openers = document.querySelectorAll('.sidebar .opener');
+          openers.forEach(function(opener) {
+            opener.addEventListener('click', function() {
+              var submenu = opener.nextElementSibling;
+              if (!submenu || !submenu.classList.contains('submenu')) return;
+              submenu.style.display = (submenu.style.display === 'block') ? 'none' : 'block';
+            });
+          });
+        });
+    </script>
+}

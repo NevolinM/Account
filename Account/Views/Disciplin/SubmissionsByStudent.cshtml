@@ -1,0 +1,52 @@
+﻿@model List<Account.Models.TaskAssignment>
+@{
+	var discipline = (Account.Models.Disciplin)ViewData["Disciplin"]!;
+	var student = (Account.Models.Student)ViewData["Student"]!;
+    ViewData["Title"] = "Задания студента";
+}
+
+<header>
+    <h1>Задания студента</h1>
+</header>
+
+<div class="container">
+	<h2>Задания студента «@student.Surname @student.Name» для дисциплины «@discipline.Name»</h2>
+	<hr />
+</div>
+
+<div class="container">
+    <div style="display: flex; flex-wrap: wrap; gap: 16px;">
+        @if (!Model.Any())
+        {
+            <div class="container">
+                <p class="text-muted">Заданий для этой дисциплины ещё не создано.</p>
+            </div>
+        }
+        else
+        {
+            @foreach (var task in Model)
+            {
+                <div class="col-6 col-sm-4 col-md-3 mb-4 text-center">
+                    <a asp-action="SubmissionsFiles"
+                       asp-controller="Disciplin"
+                       asp-route-id="@discipline.Id"
+                       asp-route-studentId="@student.Id"
+                       asp-route-taskId="@task.Id"
+                       class="text-decoration-none">
+                        <img src="~/images/file.jpg"
+                             style="width:80px;height:80px;"
+                             class="img-fluid mb-2"
+                             alt="Папка задания" />
+                        <div>@task.Title</div>
+                    </a>
+                </div>
+            }
+        }
+	</div>
+    <br />
+    <button type="button"
+            class="btn btn-secondary"
+            onclick="location.href='@Url.Action("Submissions", "Disciplin", new { id = discipline.Id })'">
+        ← Назад к списку студентов
+    </button>
+</div>

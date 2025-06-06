@@ -13,5 +13,8 @@ namespace Account.Models
         [StringLength(100, ErrorMessage = "Текст не более 100 символов")]
         [Required(ErrorMessage = "Введите описание")]
         public required string Description {  get; set; }
+        public ICollection<Course> Courses { get; set; } = new List<Course>();
+
+        public ICollection<TeacherDisciplin> TeacherDisciplins { get; set; } = new List<TeacherDisciplin>();
     }
 }

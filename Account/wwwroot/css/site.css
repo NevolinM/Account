@@ -28,7 +28,7 @@ body {
     padding: 0;
     height: 100%;
     font-family: Arial, sans-serif;
-    background-image: url('/images/background.jpg');
+    background-image: url('/images/background2.jpg');
     background-size: cover;
     background-repeat: no-repeat;
     position: relative;
@@ -46,6 +46,11 @@ body::before {
 }
 
 header {
+    position: fixed; 
+    top: 0; 
+    left: 0;
+    width: 100%;
+    z-index: 1000;
     background-color: #3f51b5;
     color: white;
     padding: 1rem 2rem;
@@ -64,6 +69,11 @@ header {
         margin-left: 1rem;
         font-size: 1rem;
     }
+
+body, .main-content {
+    margin-top: 30px;
+    padding: 2rem;
+}
 
 label {
     display: block;
@@ -114,6 +124,12 @@ button {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
+.course-cards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
 .class-card {
     background: white;
     border-radius: 8px;
@@ -145,7 +161,10 @@ button {
         }
 
 .sidebar {
-    width: 250px;
+    position: fixed;
+    top: 60px;
+    left: 0;
+    width: 200px;
     background-color: #ffffff;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
     position: fixed;
@@ -165,8 +184,20 @@ button {
             color: #3f51b5;
         }
 
+        .sidebar a.nav-link {
+            display: block;
+            margin-bottom: 1rem;
+            text-decoration: none;
+            color: #333;
+            font-size: 1.1rem;
+        }
+
+            .sidebar a.nav-link:hover {
+                color: #3f51b5;
+            }
+
 .main-content {
-    margin-left: 270px;
+    margin-left: 220px;
     padding: 2rem;
 }
 
@@ -193,9 +224,9 @@ button {
 }
 
     .login-header .icon {
-        width: 40px; /* Ширина изображения */
-        height: 40px; /* Высота изображения */
-        display: inline-block; /* Оставляем изображение в строке */
+        width: 40px; 
+        height: 40px; 
+        display: inline-block; 
     }
 
 .login-form {
@@ -213,6 +244,7 @@ button {
 .disciplin-card {
     margin-top: 1rem;
     margin-bottom: 1rem;
+    padding: 0rem 0.5rem;
 }
 
 .discipline-form {
@@ -237,16 +269,271 @@ button {
 }
 
 .course-card {
-    margin-top: 1rem;
-    margin-bottom: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    flex: 1;
 }
 
-.footer {
+.course-cards p {
+    padding: 0.5rem 2rem;
+    margin: 0;
+    font-size: 1rem;
+}
+
+.course-cards h3 {
+    padding: 0.5rem 2rem;
+}
+
+.course-footer-btn {
+    margin: 1rem 1.5rem 1.5rem;
+    align-self: center; 
+    width: calc(100% - 3rem); 
+    max-width: 500px;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    margin-top: auto;
+    margin-bottom: 16px;
+}
+
+.course-header {
+    position: relative;
+    top: auto;
+    left: auto;
+    z-index: auto;
+    padding: 1rem;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    font-size: 1.25rem;
+    font-weight: 600;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.course-actions {
+    display: flex;
+    justify-content: center;
+    gap: 4rem; 
+}
+
+.course-item {
+    display: flex;
+    flex-direction: column; 
+    align-items: center;
+}
+
+    .course-item select {
+        margin-bottom: 0.5rem;
+    }
+
+.courses-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+    gap: 1.5rem;
+    margin-top: 50px;
+    margin-left: 200px;
+    padding: 0 1rem;
+    justify-items: center;
+}
+
+    .courses-grid .course-container:only-child {
+        width: 50%;
+    }
+
+.course-container {
+    background-color: #ffffff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+}
+
+footer {
     position: fixed;
     bottom: 0;
     left: 0;
     width: 100%;
-    background-color: #f8f9fa;
+    background-color: #f1f1f1;
+    color: black;
+    text-align: center;
+    padding: 0.3rem 0;
+    z-index: 10000;
     box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
+}
+
+.journal-input {
+    width: 2.5rem;
+    text-align: center;
+    padding: 0.15rem 0.25rem;
+    font-size: 0.9rem;
+    line-height: 1.2;
+}
+
+table.table td {
+    padding: 0.35rem 0.5rem;
+}
+
+@media (max-width: 768px) {
+    .courses-grid {
+        grid-template-columns: 1fr;
+        margin-left: 10px; /* устраняем отступ сайдбара, если на мобиле он прячется */
+        margin-right: 10px;
+    }
+}
+
+
+.journal-container {
+    background-color: #ffffff;
+    margin-left: 190px;
+    margin-top: 40px;
+    padding: 0.5rem;
+}
+
+    /* === Общие настройки таблицы: компактность и аккуратность === */
+    .journal-container table {
+        border-collapse: collapse;
+        width: 100%;
+        table-layout: fixed; /* фиксированная ширина колонок, чтобы белый фон не «прыгал» */
+        font-size: 0.85rem; /* чуть мелче, чем стандартная 1rem */
+    }
+
+    .journal-container thead th,
+    .journal-container tbody td {
+        border: 1px solid #dee2e6;
+        padding: 0.1rem 0.1rem; /* минимальные отступы внутри ячеек */
+        vertical-align: middle;
+    }
+
+    /* === Заголовки столбцов: светлый фон, перенос слов, выравнивание === */
+    .journal-container thead th {
+        background-color: #f8f9fa;
+        color: #333;
+        font-weight: 600;
+        text-align: center;
+        white-space: normal; /* разрешить перенос по словам */
+        word-wrap: break-word;
+        line-height: 1.1; /* чуть пожатее строки */
+    }
+
+    /* Напрактике «Занятие №» может быть достаточно ширины, 
+   но на узких столбцах обеспечиваем перенос слов: */
+    .journal-container thead th {
+        hyphens: auto;
+    }
+
+        /* === Выравнивание для первой и второй колонок === */
+        /* Номер строки (#) — по центру */
+        .journal-container tbody td:nth-child(1),
+        .journal-container thead th:nth-child(1) {
+            text-align: center;
+        }
+
+        /* ФИО студента (вторая колонка) — слева */
+        .journal-container tbody td:nth-child(2),
+        .journal-container thead th:nth-child(2) {
+            text-align: left;
+            padding-left: 0.5rem;
+        }
+
+        /* Остальные столбцы (метки) — по центру */
+        .journal-container tbody td:nth-child(n+3),
+        .journal-container thead th:nth-child(n+3) {
+            text-align: center;
+        }
+
+    /* === Поля ввода (журнал-input) === */
+    .journal-container .journal-input {
+        width: 1.2rem; /* достаточно для одной-двух букв/символов */
+        padding: 0.15rem;
+        font-size: 0.85rem;
+        text-align: center;
+        line-height: 1.2;
+        border: 1px solid #ced4da;
+        border-radius: 0; /* отступы уже заданы минимально */
+    }
+
+        /* При фокусе подчёркиваем светлым синим оттенком */
+        .journal-container .journal-input:focus {
+            outline: none;
+            border-color: #80bdff;
+            box-shadow: 0 0 0 0.1rem rgba(0, 123, 255, 0.25);
+        }
+
+    /* === Небольшой отступ под таблицей для кнопок === */
+    .journal-container .table-responsive {
+        margin-bottom: 0.5rem;
+    }
+
+    /* === Кнопки «Сохранить» и «Назад» === */
+    .journal-container .btn {
+        font-size: 0.9rem;
+        padding: 0.35rem 0.75rem;
+    }
+
+    /* Уберём лишние отступы между строками таблицы */
+    .journal-container tbody tr {
+        height: auto;
+    }
+
+        /* При наведении на строку слегка меняем фон, чтобы было комфортнее читать */
+        .journal-container tbody tr:hover {
+            background-color: #f1f3f5;
+        }
+
+/* === Адаптив: на очень узких экранах уменьшаем шрифт === */
+@media (max-width: 576px) {
+    .journal-container table {
+        font-size: 0.75rem;
+    }
+
+    .journal-container .journal-input {
+        width: 1.8rem;
+        font-size: 0.75rem;
+    }
+}
+
+.journal-container thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
+/* «Электронные часы» */
+.clock-card {
+    background-color: #f0f0f0; 
+    border: none; 
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    padding: 1rem;
+}
+
+    .clock-card .card-body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
+
+.digital-clock {
+    font-family: 'Courier New', monospace;
+    font-size: 3rem; 
+    color: #007bff; 
+    line-height: 1;
+    letter-spacing: 0.1rem;
+}
+
+.current-date {
+    font-size: 1.1rem;
+    color: #333;
+    margin-top: 0.5rem;
+}
+
+.container .clock-card {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto; 
 }

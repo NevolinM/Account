@@ -14,6 +14,11 @@ namespace Account.Models
 
         [Required(ErrorMessage = "Поле Пароль  обязательно для заполнения")]
         public string Password { get; set; }
+
+        public string? Photo { get; set; }
+
+        [Required]
+        public string Role { get; set; }
         public string Email { get; set; }
         public string Phone { get; set; }
     }

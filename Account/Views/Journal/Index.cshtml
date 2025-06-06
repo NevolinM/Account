@@ -1,0 +1,110 @@
+﻿@model Account.Models.JournalViewModel
+@{
+	ViewData["Title"] = "Журнал курса";
+	int sessionCount = Model.SessionCount;
+    var id = @Model.DisciplinId;
+    string current = "Submissions";
+}
+
+<header>
+    <h1>Журнал курса - Личный кабинет преподавателя | @Model.DisciplinName</h1>
+    <nav>
+        <a href="/Home">Главная</a>
+        <a asp-controller="User"
+           asp-action="Profile"
+           asp-route-returnUrl="@Url.Action(Context.Request.RouteValues["action"]?.ToString(), Context.Request.RouteValues)">Профиль</a>
+        <a href="/Login">Выйти</a>
+    </nav>
+</header>
+
+<div class="sidebar">
+    <ul class="nav nav-tabs">
+        <a class="nav-link @(current == "Feed" ? "active" : "")"
+           href="@Url.Action("Feed", "Disciplin", new { id = id })">Лента</a>
+        <a class="nav-link @(current == "Tasks" ? "active" : "")"
+           href="@Url.Action("Tasks", "Disciplin", new { id = id })">Задания</a>
+        <a class="nav-link @(current == "Submissions" ? "active" : "")"
+           href="@Url.Action("Submissions", "Disciplin", new { id = id })">Работы студентов</a>
+        <a class="nav-link @(current == "Report" ? "active" : "")"
+           href="@Url.Action("Report", "Disciplin", new { id = id })">Отчетность</a>
+        <a class="nav-link" @(current == "Index" ? "active" : "")"
+           href="@Url.Action("Index", "Journal", new { id = id })">Журнал курса</a>
+        <a href="/Home/Courses">Назад к курсам</a>
+    </ul>
+</div>
+
+<div class="journal-container">
+    <h2>Журнал «@Model.DisciplinName»</h2>
+    <hr />
+
+    <form asp-action="Save" asp-controller="Journal" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="journalId" value="@Model.JournalId" />
+
+        <div class="table-responsive">
+            <table class="table table-bordered text-start" style="table-layout: fixed; width:100%;">
+                <colgroup>
+                    <col style="width:3%;" />   <!-- № -->
+                    <col style="width:9%;" />   <!-- ФИО студента -->
+                    @for (int i = 1; i <= sessionCount; i++)
+                    {
+                        <col style="width:@(88.0f / sessionCount)%;" />
+                    }
+                </colgroup>
+                <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>Студент</th>
+                        @for (int i = 1; i <= sessionCount; i++)
+                        {
+                            <th>Зан @i</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int counter = 0;
+                    }
+                    @foreach (var row in Model.Rows)
+                    {
+                        counter++;
+                        <tr>
+                            <td>@counter</td>
+                            <td>@row.StudentFullName</td>
+                            @for (int i = 1; i <= sessionCount; i++)
+                            {
+                                var cell = row.Cells[i];
+                                <td>
+                                    <input type="text"
+                                           name="cell_@(row.StudentId)_@(i)"
+                                           value="@(cell.Mark ?? "")"
+                                           class="form-control form-control-sm journal-input"
+                                           maxlength="1"
+                                           autocomplete="off" />
+                                </td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="d-flex justify-content-end mt-3">
+            <button type="submit" class="btn btn-success">Сохранить отметки</button>
+            <button type="button" class="btn btn-secondary ms-2"
+                    onclick="location.href='@Url.Action("Index", "Home")'">
+                Назад
+            </button>
+        </div>
+    </form>
+    <div class="d-flex justify-content-end mt-3">
+        <form asp-controller="Journal" asp-action="Export" method="get">
+            <input type="hidden" name="journalId" value="@Model.JournalId" />
+            <button type="submit" class="btn btn-success">
+                <i class="bi bi-file-earmark-excel"></i>
+                Экспорт в Excel
+            </button>
+        </form>
+    </div>
+</div>
+

@@ -1,0 +1,99 @@
+﻿@model Account.Models.ProfileViewModel
+@{
+	ViewData["Title"] = "Мой профиль";
+}
+
+<header>
+    <h1>Профиль - Личный кабинет преподавателя</h1>
+    <nav>
+        <a href="/Home">Главная</a>
+        <a asp-controller="User"
+           asp-action="Profile"
+           asp-route-returnUrl="@Url.Action(Context.Request.RouteValues["action"]?.ToString(), Context.Request.RouteValues)">Профиль</a>
+        <a href="/Login">Выйти</a>
+    </nav>
+</header>
+
+<div class="container">
+    <div class="card mx-auto" style="display: flex; flex-wrap: wrap; gap: 16px; max-width: 1000px;">
+        <div class="card-body d-flex flex-column">
+            <h2 class="card-title mb-4">Профиль преподавателя</h2>
+
+            <div class="row" style="display: flex; flex-wrap: wrap; gap: 16px;">
+                <!-- Левая колонка: подписи и значения -->
+                <div class="col-md-8">
+                    <div class="mb-3 row">
+                        <label class="col-sm-4 col-form-label fw-semibold">Фамилия:</label>
+                        <div class="col-sm-8">
+                            <span class="form-control-plaintext">@Model.Surname</span>
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label class="col-sm-4 col-form-label fw-semibold">Имя:</label>
+                        <div class="col-sm-8">
+                            <span class="form-control-plaintext">@Model.Name</span>
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label class="col-sm-4 col-form-label fw-semibold">Отчество:</label>
+                        <div class="col-sm-8">
+                            <span class="form-control-plaintext">@Model.Patronymic</span>
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label class="col-sm-4 col-form-label fw-semibold">Логин:</label>
+                        <div class="col-sm-8">
+                            <span class="form-control-plaintext">@Model.Login</span>
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label class="col-sm-4 col-form-label fw-semibold">Email:</label>
+                        <div class="col-sm-8">
+                            <span class="form-control-plaintext">@Model.Email</span>
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label class="col-sm-4 col-form-label fw-semibold">Телефон:</label>
+                        <div class="col-sm-8">
+                            <span class="form-control-plaintext">@Model.Phone</span>
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label class="col-sm-4 col-form-label fw-semibold">Роль:</label>
+                        <div class="col-sm-8">
+                            <span class="form-control-plaintext">@Model.Role</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Правая колонка: фотография -->
+                <div class="col-md-4 text-center">
+                    <div class="mb-3">
+                        <img src="@(string.IsNullOrEmpty(Model.PhotoUrl) ? "/images/default-profile.png" : Model.PhotoUrl)"
+                             alt="Фото профиля"
+                             class="rounded-circle"
+                             style="width: 150px; height: 150px; object-fit: cover; border: 2px solid #dee2e6;" />
+                    </div>
+                    <div class="col-auto text-center">
+                        <small">Фото профиля</small>
+                    </div>
+                </div>
+            </div>
+            <br />
+        </div>
+        <div class="button-container">
+            <button type="button"
+                    class="btn btn-primary me-2"
+                    onclick="window.open(
+                            '@Url.Action("EditProfile", "User")',
+                            'editProfileWnd',
+                            'width=450,height=650,menubar=no,toolbar=no');">
+                Редактировать
+            </button>
+            <button type="button"
+                    onclick="window.location.href='@(String.IsNullOrWhiteSpace(Model.ReturnUrl) ? Url.Action("Index", "Home") : Model.ReturnUrl)';">
+                Назад
+            </button>
+        </div>
+    </div>
+</div>

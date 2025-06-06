@@ -1,0 +1,152 @@
+﻿@using System.IO
+@{
+    var discipline = (Account.Models.Disciplin)ViewData["Disciplin"]!;
+    var student = (Account.Models.Student)ViewData["Student"]!;
+    var task = (Account.Models.TaskAssignment)ViewData["Task"]!;
+    var files = (List<string>)ViewData["Files"]!;
+    var submissions = (List<Account.Models.TaskSubmission>)ViewData["Submissions"]!;
+     var grade       = (Account.Models.TaskGrade?)ViewData["Grade"];
+    ViewData["Title"] = $"Файлы: {task.Title} — {student.Surname}";
+}
+
+<header>
+    <h1>Файлы студента по заданию </h1>
+</header>
+
+<div class="container">
+	<h2>Файлы для задания «@task.Title» студента «@student.Surname @student.Name»</h2>
+	<hr />
+</div>
+
+<div class="container">
+    <div style="display: flex; flex-wrap: wrap; gap: 16px;">
+        @if (!files.Any())
+        {
+            <div class="container">
+                <p class="text-muted">Студент ещё не загрузил решение.</p>
+            </div>
+        }
+        else
+        {
+            <div style="display: flex; flex-wrap: wrap; gap: 16px;">
+                @foreach (var fileName in files)
+                {
+                    var submissionEntry = submissions
+                    .FirstOrDefault(s => System.IO.Path.GetFileName(s.FileUrl) == fileName);
+
+                    <div style="display: flex; flex-direction: column; align-items: center; width: 120px;">
+                        <a href="@Url.Content($"~/submissions/disc_{discipline.Id}/student_{student.Id}/task_{task.Id}/{fileName}")"
+                           target="_blank"
+                           style="text-decoration: none; color: inherit;">
+                            <img src="~/images/work.jpg"
+                                 alt="Файл @fileName"
+                                 class="img-fluid mt-2"
+                                 style="width: 60px; height: 80px; object-fit: cover;" />
+                            <div class="card-body p-2">
+                                <div style="font-size: 0.9rem; word-wrap: break-word;">
+                                    @fileName
+                                </div>
+                            </div>
+                        </a>
+
+                        @if (submissionEntry != null)
+                        {
+                            <form asp-action="DeleteSubmission"
+                                  asp-controller="Disciplin"
+                                  method="post"
+                                  style="margin-top: 0.5rem;">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="submissionId" value="@submissionEntry.Id" />
+                                <input type="hidden" name="disciplinId" value="@discipline.Id" />
+                                <input type="hidden" name="studentId" value="@student.Id" />
+                                <input type="hidden" name="taskId" value="@task.Id" />
+                                <button type="submit" class="btn btn-sm btn-danger"
+                                        style="font-size: 0.75rem; padding: 0.25rem 0.5rem;"
+                                        onclick="return confirm('Вы уверены, что хотите удалить этот материал?');">
+                                    Удалить
+                                </button>
+                            </form>
+                        }
+                    </div>
+                }
+            </div>
+            <div class="card text-center me-4 mb-4" style="width: 150px;">
+                <div class="card-footer">
+                    <form asp-action="RateSubmission"
+                          asp-controller="Disciplin"
+                          method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="assignmentId" value="@task.Id" />
+                        <input type="hidden" name="studentId"    value="@student.Id" />
+                        <input type="hidden" name="disciplinId"  value="@discipline.Id" />
+
+                        <div class="row gx-2 gy-2 align-items-center">
+                            <div class="col-auto">
+                                <label for="scoreInput" class="form-label mb-0">Оценка</label>
+                            </div>
+                            <div class="col-auto">
+                                <input type="number"
+                                       id="scoreInput"
+                                       name="score"
+                                       class="form-control"
+                                       style="width: 80px;"
+                                       min="0"
+                                       max="100"
+                                       value="@(grade != null ? grade.Score.ToString() : "")"
+                                       placeholder="0–100" />
+                            </div>
+                            <div class="col-auto">
+                                <button type="submit" class="btn btn-primary">Сохранить оценку</button>
+                            </div>
+                        </div>
+                        @if (!ViewData.ModelState.IsValid)
+                        {
+                            <div class="text-danger mt-2">
+                                @foreach (var err in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                                {
+                                    @err.ErrorMessage<br />
+                                }
+                            </div>
+                        }
+                    </form>
+                </div>
+            </div>
+        }
+    </div>
+    <br />
+    <button type="button"
+            class="btn btn-secondary"
+            onclick="location.href='@Url.Action("Submissions", "Disciplin", new { id = discipline.Id })'">
+        ← Назад к списку студентов
+    </button>
+</div>
+
+<div class="container">
+    <!-- ====== Форма загрузки нового файла (решения) ====== -->
+    <div class="card">
+        <div class="card-header">
+            <strong>Загрузить решение</strong>
+        </div>
+        <div class="card-body">
+            <form asp-action="UploadSubmission"
+                  asp-controller="Disciplin"
+                  method="post"
+                  enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="disciplinId" value="@discipline.Id" />
+                <input type="hidden" name="studentId" value="@student.Id" />
+                <input type="hidden" name="taskId" value="@task.Id" />
+
+                <div class="mb-3">
+                    <label for="fileInput" class="form-label">Выберите файл</label>
+                    <input type="file" id="fileInput" name="file"
+                           class="form-control" required />
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    Загрузить
+                </button>
+            </form>
+        </div>
+    </div>
+    <!-- ====== /Форма загрузки ====== -->
+</div>

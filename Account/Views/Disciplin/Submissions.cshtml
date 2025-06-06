@@ -1,0 +1,88 @@
+﻿@model Account.Models.DisciplinSubmissionsViewModel
+@{
+	ViewData["Title"] = $"Папки студентов: {Model.Disciplin.Name}";
+    var id = @Model.Disciplin.Id;
+    string current = "Submissions";
+}
+
+<header>
+    <h1>Папки студентов - Личный кабинет преподавателя | @Model.Disciplin.Name</h1>
+    <nav>
+        <a href="/Home">Главная</a>
+        <a asp-controller="User"
+           asp-action="Profile"
+           asp-route-returnUrl="@Url.Action(Context.Request.RouteValues["action"]?.ToString(), Context.Request.RouteValues)">Профиль</a>
+        <a href="/Login">Выйти</a>
+    </nav>
+</header>
+
+<div class="sidebar">
+    <ul class="nav nav-tabs">
+        <a class="nav-link @(current == "Feed" ? "active" : "")"
+           href="@Url.Action("Feed", "Disciplin", new { id = id })">Лента</a>
+        <a class="nav-link @(current == "Tasks" ? "active" : "")"
+           href="@Url.Action("Tasks", "Disciplin", new { id = id })">Задания</a>
+        <a class="nav-link @(current == "Submissions" ? "active" : "")"
+           href="@Url.Action("Submissions", "Disciplin", new { id = id })">Работы студентов</a>
+        <a class="nav-link @(current == "Report" ? "active" : "")"
+           href="@Url.Action("Report", "Disciplin", new { id = id })">Отчетность</a>
+        <a class="nav-link" @(current == "Index" ? "active" : "")"
+           href="@Url.Action("Index", "Journal", new { id = id })">Журнал курса</a>
+        <a href="/Home/Courses">Назад к курсам</a>
+    </ul>
+</div>
+
+<div class="container">
+    <h1>Дисциплина: @Model.Disciplin.Name</h1>
+    <p><em>@Model.Disciplin.Description</em></p>
+    <hr />
+</div>
+
+<div class="container">
+    <div style="display: flex; flex-wrap: wrap; gap: 16px;">
+        @if (!Model.GroupedStudents.Any())
+        {
+            <div class="container">
+                Нет групп или студентов, привязанных к этой дисциплине.
+            </div>
+        }
+        else
+        {
+            @foreach (var grpVm in Model.GroupedStudents)
+            {
+                <!-- Заголовок группы -->
+                <h3 class="mt-4 mb-3">
+                    <span class="badge bg-secondary">Группа: @grpVm.Group.Name</span>
+                </h3>
+
+                <!-- Flex‐контейнер для «папок‐студентов» этой группы -->
+                <div style="display: flex; flex-wrap: wrap; gap: 16px;">
+                    @if (!grpVm.Students.Any())
+                    {
+                        <div class="text-muted">В этой группе ещё нет студентов.</div>
+                    }
+                    else
+                    {
+                        @foreach (var student in grpVm.Students)
+                        {
+                            <div style="display: flex; flex-direction: column; align-items: center; width: 120px;">
+                                <a asp-action="SubmissionsByStudent"
+                                   asp-controller="Disciplin"
+                                   asp-route-id="@Model.Disciplin.Id"
+                                   asp-route-studentId="@student.Id"
+                                   style="text-decoration: none; color: inherit;">
+                                    <img src="~/images/file.jpg"
+                                         style="width: 80px; height: 80px; display: block; margin-bottom: 8px;"
+                                         alt="Папка студента" />
+                                    <div style="font-size: 0.95rem; text-align: center;">
+                                        @student.Surname @student.Name
+                                    </div>
+                                </a>
+                            </div>
+                        }
+                    }
+                </div>
+            }
+        }
+    </div>
+</div>

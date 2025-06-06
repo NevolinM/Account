@@ -1,50 +1,182 @@
-﻿@{
+﻿@using System.Linq
+@model List<Account.Models.Disciplin>
+@{
     ViewData["Title"] = "Личный кабинет преподавателя";
+    var allGroups = (List<Account.Models.Student_Groups>)ViewBag.AllGroups;
 }
 
 <header>
-    <h1>Управление курсами - Личный кабинет преподавателя | Курсы</h1>
+    <h1>Управление курсами - Личный кабинет преподавателя | Курсы по дисциплинам</h1>
     <nav>
-        <a href="/">Главная</a>
-        <a href="/">Профиль</a>
+        <a href="/Home">Главная</a>
+        <a asp-controller="User"
+           asp-action="Profile"
+           asp-route-returnUrl="@Url.Action(Context.Request.RouteValues["action"]?.ToString(), Context.Request.RouteValues)">Профиль</a>
         <a href="/Login">Выйти</a>
     </nav>
 </header>
 
 <div class="sidebar">
-    <a href="/Home/Disciplin">Дисциплины</a>
-    <a href="/Home/Courses">Курсы</a>
-    <a href="/">Оповещения</a>
-    <a href="/">Отчетность</a>
-
-    <div class="course-actions-sidebar">
-        <h3>Управление курсами</h3>
-        <button class="action-button" id="add-course">Добавить курс</button>
-        <div class="input-group">
-            <label for="edit-course-name">Редактировать курс</label>
-            <input type="text" id="edit-course-name" placeholder="Название курса">
-            <button class="action-button" id="save-course">Редактировать</button>
-        </div>
-        <div class="input-group">
-            <label for="add-material">Добавить материал</label>
-            <input type="file" id="add-material">
-            <button class="action-button" id="upload-material">Загрузить материал</button>
-        </div>
-    </div>
+    <ul class="nav flex-column">
+        <a href="/Home/Disciplin">Дисциплины</a>
+        <a href="/Home/Courses">Курсы</a>
+        <a class="nav-link opener" href="javascript:void(0);">
+            Отчетность
+        </a>
+        <ul class="submenu list-unstyled" style="display: none; padding-left: 1rem; margin-top: 0.5rem;">
+            @foreach (var d in Model)
+            {
+                <li class="nav-item">
+                    <a class="nav-link"
+                       href="@Url.Action("Report", "Disciplin", new { id = d.Id })">
+                        @d.Name
+                    </a>
+                </li>
+            }
+        </ul>
+        <a class="nav-link opener" href="javascript:void(0);">
+            Журнал курса
+        </a>
+        <ul class="submenu list-unstyled" style="display: none; padding-left: 1rem; margin-top: 0.5rem;">
+            @foreach (var d in Model)
+            {
+                <li class="nav-item">
+                    <a class="nav-link"
+                       href="@Url.Action("Index", "Journal", new { id = d.Id })">
+                        @d.Name
+                    </a>
+                </li>
+            }
+        </ul>
+    </ul>
 </div>
 
-<div class="main-content">
+@if (Model != null && Model.Any())
+{
+    <div class="courses-grid">
+        @foreach (var d in Model)
+        {
+            <div class="course-container">
+                <header class="course-header">
+                    <h2>@d.Name</h2>
+                    <form asp-controller="Course"
+                          asp-action="Create"
+                          method="post"
+                          class="d-flex align-items-center me-3 mb-0">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="disciplinId" value="@d.Id" />
+        
+                        <div class="course-actions">
+                            <div class="course-item">
+                                <select name="studentGroupId"
+                                        class="form-select form-select-sm me-1"
+                                        style="width:auto">
+                                    <option value="">--выбрать курс--</option>
+                                    @{
+                                        var usedIds = d.Courses.Select(c => c.StudentGroupId).ToHashSet();
+                                        var available = allGroups.Where(g => !usedIds.Contains(g.Id));
+                                    }
+                                    @foreach (var g in available)
+                                    {
+                                        <option value="@g.Id">@g.Name</option>
+                                    }
+                                </select>
+        
+                                <button type="submit" class="btn btn-sm btn-primary">
+                                    Добавить
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+        
+                    <form asp-controller="Course"
+                          asp-action="Delete"
+                          method="post"
+                          class="d-flex align-items-center mb-0">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="disciplinId" value="@d.Id" />
+        
+                        <div class="course-actions">
+                            <div class="course-item">
+                                <select name="studentGroupId"
+                                        class="form-select form-select-sm me-1"
+                                        style="width:auto">
+                                    <option value="">--выбрать курс--</option>
+                                    @foreach (var c in d.Courses)
+                                    {
+                                        <option value="@c.StudentGroupId">
+                                            @c.StudentGroup.Name
+                                        </option>
+                                    }
+                                </select>
+                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Вы уверены, что хотите удалить этот курс?');">
+                                    Удалить
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </header>
+        
+                <div class="course-cards">
+                    @if (d.Courses != null && d.Courses.Count > 0)
+                    {
+                        @foreach (var c in d.Courses)
+                        {
+                            <div class="card course-card">
+                                <div class="card-body">
+                                    <h4 class="card-title">Группа: @c.StudentGroup.Name</h4>
+                                    <a class="btn btn-sm btn-outline-secondary"
+                                       asp-controller="Course"
+                                       asp-action="Details"
+                                       asp-route-id="@c.Id">
+                                        Перейти
+                                    </a>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p>Курсов пока нет.</p>
+                    }
+                </div>
+        
+                <button type="button"
+                        class="btn btn-primary course-footer-btn"
+                        onclick="location.href='@Url.Action("Feed", "Disciplin", new { id = d.Id })'">
+                    Перейти к курсу
+                </button>
+            </div>
+        }
+    </div>
+}
+else
+{
     <div class="container">
-        <h2>Существующие курсы</h2>
-        <div class="course">
-            <div class="course-card">
-                <h3>Математика: ИС-21</h3>
-                <p>Описание курса: Введение в основы алгебры и геометрии.</p>
-            </div>
-            <div class="course-card">
-                <h3>Физика: ИАС-21</h3>
-                <p>Описание курса: Основы механики и термодинамики.</p>
-            </div>
+        <header class="course-header">
+            <h2>Дисциплины</h2>
+        </header>
+        <div class="disciplin">
+            <p>Дисциплин не найдено.</p>
         </div>
     </div>
-</div>
+}
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+          var openers = document.querySelectorAll('.sidebar .opener');
+          openers.forEach(function(opener) {
+            opener.addEventListener('click', function() {
+              var submenu = opener.nextElementSibling;
+              if (!submenu || !submenu.classList.contains('submenu')) return;
+              if (submenu.style.display === 'block') {
+                submenu.style.display = 'none';
+              } else {
+                submenu.style.display = 'block';
+              }
+            });
+          });
+        });
+    </script>
+}

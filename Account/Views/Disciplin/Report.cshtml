@@ -1,0 +1,123 @@
+﻿@model Account.Models.DisciplinMatrixViewModel
+@{
+    var discipline = Model.Disciplin;
+    ViewData["Title"] = $"Ведомость дисциплины — {discipline.Name}";
+    int taskCount = Model.Tasks?.Count ?? 0;
+    var id = Model.Disciplin.Id;
+	string current = "Report";
+}
+
+<header>
+    <h1>Отчет по успеваемости - Личный кабинет преподавателя | @Model.Disciplin.Name</h1>
+    <nav>
+        <a href="/Home">Главная</a>
+        <a asp-controller="User"
+           asp-action="Profile"
+           asp-route-returnUrl="@Url.Action(Context.Request.RouteValues["action"]?.ToString(), Context.Request.RouteValues)">Профиль</a>
+        <a href="/Login">Выйти</a>
+    </nav>
+</header>
+
+<div class="sidebar">
+    <ul class="nav nav-tabs">
+        <a class="nav-link @(current == "Feed" ? "active" : "")"
+           href="@Url.Action("Feed", "Disciplin", new { id = id })">Лента</a>
+        <a class="nav-link @(current == "Tasks" ? "active" : "")"
+           href="@Url.Action("Tasks", "Disciplin", new { id = id })">Задания</a>
+        <a class="nav-link @(current == "Submissions" ? "active" : "")"
+           href="@Url.Action("Submissions", "Disciplin", new { id = id })">Работы студентов</a>
+        <a class="nav-link @(current == "Report" ? "active" : "")"
+           href="@Url.Action("Report", "Disciplin", new { id = id })">Отчетность</a>
+        <a class="nav-link" @(current == "Index" ? "active" : "")"
+           href="@Url.Action("Index", "Journal", new { id = id })">Журнал курса</a>
+        <a href="/Home/Courses">Назад к курсам</a>
+    </ul>
+</div>
+
+<div class="container">
+    <h1>Дисциплина: @Model.Disciplin.Name</h1>
+    <p><em>@Model.Disciplin.Description</em></p>
+    <hr />
+</div>
+
+<div class="container
+    @if (taskCount == 0)
+    {
+        <div class="alert alert-info">Для этой дисциплины ещё не создано ни одного задания.</div>
+    }
+    else if (!Model.Groups.Any() || Model.Groups.All(g => !g.Students.Any()))
+    {
+        <div class="alert alert-info">Нет групп или студентов, привязанных к этой дисциплине.</div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th style="position: sticky; top: 0; background: #fff; z-index: 2; min-width: 200px;">
+                            Студент
+                        </th>
+                        @foreach (var task in Model.Tasks)
+                        {
+                            <th style="position: sticky; top: 0; background: #fff; z-index: 2; min-width: 120px;">
+                                @task.Title
+                            </th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var groupMatrix in Model.Groups)
+                    {
+                        <!-- Разделитель для группы -->
+                        <tr>
+                            <td colspan="@(taskCount + 1)" class="bg-secondary text-white">
+                                <strong>Группа: @groupMatrix.Group.Name</strong>
+                            </td>
+                        </tr>
+
+                        @foreach (var studentMatrix in groupMatrix.Students)
+                        {
+                            <tr>
+                                <!-- ФИО студента -->
+                                <td>
+                                    @studentMatrix.Student.Surname @studentMatrix.Student.Name
+                                    @(String.IsNullOrWhiteSpace(studentMatrix.Student.Patronymic) ? "" : " " + studentMatrix.Student.Patronymic)
+                                </td>
+
+                                <!-- Оценки по каждому заданию -->
+                                @foreach (var task in Model.Tasks)
+                                {
+                                    <td class="text-center" align="center">
+                                        @{
+                                            var score = studentMatrix.Scores.ContainsKey(task.Id)
+                                            ? studentMatrix.Scores[task.Id]
+                                            : null;
+                                        }
+                                        @if (score.HasValue)
+                                        {
+                                            <span>@score</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">–</span>
+                                        }
+                                    </td>
+                                }
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+            <br />
+            <div class="mb-3">
+                <button type="button"
+                        class="btn btn-success"
+                        onclick="location.href='@Url.Action("ExportReport", "Disciplin", new { id = discipline.Id })'">
+                    Экспорт в Excel
+                </button>
+            </div>
+        </div>
+    }
+</div>
+

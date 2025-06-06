@@ -5,18 +5,48 @@
 <header>
     <h1>Управление дисциплинами - Личный кабинет преподавателя | Дисциплины</h1>
     <nav>
-        <a href="/">Главная</a>
-        <a href="/">Профиль</a>
+        <a href="/Home">Главная</a>
+        <a asp-controller="User"
+           asp-action="Profile"
+           asp-route-returnUrl="@Url.Action(Context.Request.RouteValues["action"]?.ToString(), Context.Request.RouteValues)">Профиль</a>
         <a href="/Login">Выйти</a>
     </nav>
 </header>
 
 <div class="sidebar">
-    <a href="/Home/Disciplin">Дисциплины</a>
-    <a href="/Home/Courses">Курсы</a>
-    <a href="/">Оповещения</a>
-    <a href="/">Отчетность</a>
-
+    <ul class="nav flex-column">
+        <a href="/Home/Disciplin">Дисциплины</a>
+        <a href="/Home/Courses">Курсы</a>
+        <a class="nav-link opener" href="javascript:void(0);">
+            Отчетность
+        </a>
+        <ul class="submenu list-unstyled" style="display: none; padding-left: 1rem; margin-top: 0.5rem;">
+            @foreach (var d in Model)
+            {
+                <li class="nav-item">
+                    <a class="nav-link"
+                       href="@Url.Action("Report", "Disciplin", new { id = d.Id })">
+                        @d.Name
+                    </a>
+                </li>
+            }
+        </ul>
+        <a class="nav-link opener" href="javascript:void(0);">
+            Журнал курса
+        </a>
+        <ul class="submenu list-unstyled" style="display: none; padding-left: 1rem; margin-top: 0.5rem;">
+            @foreach (var d in Model)
+            {
+                <li class="nav-item">
+                    <a class="nav-link"
+                       href="@Url.Action("Index", "Journal", new { id = d.Id })">
+                        @d.Name
+                    </a>
+                </li>
+            }
+        </ul>
+    </ul>
+    <br/>
     <div class="sidebar-actions">
         <h3>Управление дисциплинами</h3>
         <button class="action-button" id="create-discipline" onclick="window.location.href='/Disciplin/Create_Disciplin'">Создать дисциплину</button>
@@ -24,7 +54,7 @@
         <form asp-action="DeleteDisciplin" asp-controller="Home" method="post">
             <label for="Name" >Удалить дисциплину:</label>
             <input type="text" id="Name" name="disciplineName" placeholder="Название дисциплины">
-            <button type="submit" class="action-button">Удалить</button>
+            <button type="submit" class="action-button" onclick="return confirm('Вы уверены, что хотите удалить эту дисциплину?');">Удалить</button>
         </form>
 
         <div class="input-group">
@@ -32,22 +62,60 @@
             <input type="text" id="edit-course-name" placeholder="Название дисциплины">
             <button class="action-button" id="save-course">Редактировать</button>
         </div>
-        <button class="action-button" id="generate-report">Создать отчетность</button>
+        @section Scripts {
+            <script>
+                document.getElementById("save-course").addEventListener("click", function() {
+                  var name = document.getElementById("edit-course-name").value.trim();
+                  if (!name) {
+                    alert("Введите название дисциплины для редактирования");
+                    return;
+                  }
+                  window.open(
+                    '/Disciplin/Edit_Disciplin?name=' + encodeURIComponent(name),
+                    'editWindow',
+                    'width=600,height=400,resizable=yes'
+                  );
+                });
+
+                document.addEventListener("DOMContentLoaded", function() {
+                  var openers = document.querySelectorAll('.sidebar .opener');
+                  openers.forEach(function(opener) {
+                    opener.addEventListener('click', function() {
+                      var submenu = opener.nextElementSibling;
+                      if (!submenu || !submenu.classList.contains('submenu')) return;
+                      if (submenu.style.display === 'block') {
+                        submenu.style.display = 'none';
+                      } else {
+                        submenu.style.display = 'block';
+                      }
+                    });
+                  });
+                });
+            </script>
+        }
     </div>
 </div>
 
 @model List<Account.Models.Disciplin>
-<div class="main-content">
-    <div class="container">
-        <h2>Существующие дисциплины</h2>
-        <div class="disciplin">
+<div class="container">
+    <header class="course-header">
+        <h2>Ваши дисциплины</h2>
+    </header>
+    <div class="disciplin">
+        @if (Model != null && Model.Any())
+        {
             @foreach (var disciplin in Model) 
             { 
                 <div class="disciplin-card">
                     <h3>Дисциплина: @disciplin.Name</h3>
                     <p>Описание курса: @disciplin.Description</p>
                 </div>
+                <hr/>
             }
-        </div>
+        }
+        else
+        {
+            <p>Дисциплин не найдено.</p>
+        }
     </div>
 </div>

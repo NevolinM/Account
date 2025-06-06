@@ -1,0 +1,33 @@
+﻿@model Account.Models.Disciplin
+
+@{
+	ViewData["Title"] = "Редактирование дисциплины";
+}
+
+<header>
+    <h1>Редактирование дисциплины</h1>
+</header>
+
+<div class="container">
+    <form asp-action="Edit_Disciplin" method="post" class="discipline-form">
+        <input asp-for="Id" type="hidden" />
+
+        <label asp-for="Name">Название дисциплины:</label>
+        <input asp-for="Name" required />
+        <span asp-validation-for="Name" class="text-danger"></span>
+
+        <label asp-for="Description">Описание:</label>
+        <textarea asp-for="Description" rows="4" required></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+
+        <div class="button-container">
+            <button type="submit">Сохранить</button>
+            <button type="button" onclick="window.close()">Отмена</button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+}

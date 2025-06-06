@@ -1,0 +1,81 @@
+﻿@model RegisterViewModel
+@{
+	ViewData["Title"] = "Регистрация";
+}
+
+<header class="login-header">
+    <img src="/images/DNTY.jpg" alt="Icon" class="icon" />
+    <h1>Донецкий Национальный Технический Университет | Регистрация</h1>
+</header>
+
+<div class="login-container">
+    <h2>Регистрация нового преподавателя</h2>
+
+    <form asp-action="Register" method="post" class="login-form">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div>
+            <label asp-for="Surname">Фамилия:</label>
+            <input asp-for="Surname" id="surname" />
+            <span asp-validation-for="Surname" class="text-danger"></span>
+        </div>
+
+        <div>
+            <label asp-for="Name">Имя:</label>
+            <input asp-for="Name" id="name" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+
+        <div>
+            <label asp-for="Patronymic">Отчество:</label>
+            <input asp-for="Patronymic" id="patronymic" />
+            <span asp-validation-for="Patronymic" class="text-danger"></span>
+        </div>
+
+        <div>
+            <label asp-for="Login">Логин:</label>
+            <input asp-for="Login" id="login" />
+            <span asp-validation-for="Login" class="text-danger"></span>
+        </div>
+
+        <div>
+            <label asp-for="Password">Пароль:</label>
+            <input asp-for="Password" id="password" type="password" />
+            <span asp-validation-for="Password" class="text-danger"></span>
+        </div>
+
+        <div>
+            <label asp-for="ConfirmPassword">Подтверждение пароля:</label>
+            <input asp-for="ConfirmPassword" id="confirm-password" type="password" />
+            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+        </div>
+
+        <div>
+            <label asp-for="Email">Email:</label>
+            <input asp-for="Email" id="email" type="email" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+
+        <div>
+            <label asp-for="Phone">Телефон:</label>
+            <input asp-for="Phone" id="phone" />
+            <span asp-validation-for="Phone" class="text-danger"></span>
+        </div>
+
+        <div>
+            <label asp-for="Role">Роль:</label>
+            <select asp-for="Role">
+                <option value="Teacher">Преподаватель</option>
+                <option value="Admin">Администратор</option>
+            </select>
+            <span asp-validation-for="Role" class="text-danger"></span>
+        </div>
+
+        <button type="submit">Зарегистрироваться</button>
+    </form>
+</div>
+
+@section Scripts {
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+}

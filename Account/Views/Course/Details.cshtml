@@ -1,0 +1,61 @@
+﻿@model CourseDetailsViewModel
+@{
+	ViewData["Title"] = "Детали курса";
+    var course = Model.Course; 
+    int counter = 0;
+}
+
+<header>
+    <h1>Информация по группе</h1>
+</header>
+
+<div class="container">
+    <header class="course-header">
+        <h1>Курс: @course.StudentGroup.Name</h1>
+        <p>Дисциплина: @course.Disciplin.Name</p>
+    </header>
+    <hr />
+    <br />
+    <h2>Студенты, обучающиеся на этом курсе</h2>
+    <br />
+    @if (Model.Students != null && Model.Students.Any())
+    {
+        <table class="table" style="table-layout: fixed; width: 100%; text-align: left">
+            <colgroup>
+                <col style="width: 10%;" />   <!-- # -->
+                <col style="width: 30%;" />   <!-- Фамилия -->
+                <col style="width: 30%;" />   <!-- Имя -->
+                <col style="width: 30%;" />   <!-- Отчество -->
+            </colgroup>
+            <thead>
+                <tr>
+                    <th style="width:10%;">#</th>
+                    <th style="width:30%;">Фамилия</th>
+                    <th style="width:30%;">Имя</th>
+                    <th style="width:30%;">Отчество</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var s in Model.Students)
+                {
+                    <tr>
+                        <td>@(++counter)</td>
+                        <td>@s.Surname</td>
+                        <td>@s.Name</td>
+                        <td>@s.Patronymic</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>Студенты не найдены.</p>
+    }
+    <br />
+    <button type="button"
+            class="btn btn-sm btn-secondary"
+            onclick="location.href='@Url.Action("Courses", "Home")'">
+        Назад к списку курсов
+    </button>
+</div>

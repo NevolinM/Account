@@ -1,8 +1,9 @@
-using System.Diagnostics;
 using Account.Data;
 using Account.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
+using System.Security.Claims;
 
 namespace Account.Controllers
 {
@@ -17,16 +18,36 @@ namespace Account.Controllers
             _context = context;
         }
 
+        // Вспомогательный метод для получения ID преподавателя из claims
+        private int? GetTeacherId()
+        {
+            var claim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            return int.TryParse(claim, out var id) ? id : (int?)null;
+        }
+
         public async Task<IActionResult> Index()
         {
-            List<Disciplin> disciplines = await _context.Disciplin.ToListAsync();
+            var teacherId = GetTeacherId();
+            if (teacherId == null)
+                return Unauthorized();
+
+            var disciplines = await _context.TeacherDisciplins
+                .Where(td => td.TeacherId == teacherId)
+                .Select(td => td.Disciplin)
+                .ToListAsync();
             return View(disciplines);
         }
 
         [HttpPost]
         public async Task<IActionResult> DeleteDisciplin(string disciplineName)
         {
-            var discipline = await _context.Disciplin
+            var teacherId = GetTeacherId();
+            if (teacherId == null)
+                return Unauthorized();
+
+            var discipline = await _context.TeacherDisciplins
+                .Where(td => td.TeacherId == teacherId)
+                .Select(td => td.Disciplin)
                 .FirstOrDefaultAsync(d => d.Name == disciplineName);
 
             if (discipline != null)
@@ -39,12 +60,19 @@ namespace Account.Controllers
                 ModelState.AddModelError(string.Empty, "Дисциплина не найдена");
             }
 
-            return Redirect("/Home/Disciplin");
+            return RedirectToAction(nameof(Disciplin));
         }
 
         public async Task<IActionResult> Disciplin()
         {
-            List<Disciplin> disciplines = await _context.Disciplin.ToListAsync();
+            var teacherId = GetTeacherId();
+            if (teacherId == null)
+                return Unauthorized();
+
+            var disciplines = await _context.TeacherDisciplins
+                .Where(td => td.TeacherId == teacherId)
+                .Select(td => td.Disciplin)
+                .ToListAsync();
             return View(disciplines);
         }
 
@@ -54,9 +82,20 @@ namespace Account.Controllers
             return View();
         }
 
-        public IActionResult Courses()
+        public async Task<IActionResult> Courses()
         {
-            return View();
+            var teacherId = GetTeacherId();
+            if (teacherId == null)
+                return Unauthorized();
+
+            var list = await _context.Disciplin
+                .Where(d => d.TeacherDisciplins.Any(td => td.TeacherId == teacherId))
+                .Include(d => d.Courses)
+                    .ThenInclude(c => c.StudentGroup)
+                .ToListAsync();
+
+            ViewBag.AllGroups = await _context.StudentGroups.ToListAsync();
+            return View(list);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

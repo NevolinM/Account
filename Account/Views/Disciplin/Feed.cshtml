@@ -1,0 +1,140 @@
+﻿@model Account.Models.DisciplinFeedViewModel
+@{
+    ViewData["Title"] = "Лента дисциплины";
+    int id = Model.Disciplin.Id;
+    string current = "Feed";
+    var d = Model.Disciplin;
+}
+
+<header>
+    <h1>Лента дисциплины - Личный кабинет преподавателя | @d.Name</h1>
+    <nav>
+        <a href="/Home">Главная</a>
+        <a asp-controller="User"
+           asp-action="Profile"
+           asp-route-returnUrl="@Url.Action(Context.Request.RouteValues["action"]?.ToString(), Context.Request.RouteValues)">Профиль</a>
+        <a href="/Login">Выйти</a>
+    </nav>
+</header>
+
+<div class="sidebar">
+    <ul class="nav nav-tabs">
+        <a class="nav-link @(current == "Feed" ? "active" : "")"
+               href="@Url.Action("Feed", "Disciplin", new { id = id })">Лента</a>
+        <a class="nav-link @(current == "Tasks" ? "active" : "")"
+           href="@Url.Action("Tasks", "Disciplin", new { id = id })">Задания</a>
+        <a class="nav-link @(current == "Submissions" ? "active" : "")"
+           href="@Url.Action("Submissions", "Disciplin", new { id = id })">Работы студентов</a>
+        <a class="nav-link @(current == "Report" ? "active" : "")"
+           href="@Url.Action("Report", "Disciplin", new { id = id })">Отчетность</a>
+        <a class="nav-link" @(current == "Index" ? "active" : "")"
+           href="@Url.Action("Index", "Journal", new { id = id })">Журнал курса</a>
+        <a href="/Home/Courses">Назад к курсам</a>
+    </ul>
+</div>
+
+<div class="container">
+    <h1>Дисциплина: @d.Name</h1>
+    <p><em>@d.Description</em></p>
+    <hr />
+</div>
+
+<!-- ======== Форма загрузки нового материала ======== -->
+<div class="container">
+    <div class="card-header">
+        <strong>Загрузить новый материал</strong>
+    </div>
+    <div class="card-body">
+        <form asp-action="UploadMaterial"
+              asp-controller="Disciplin"
+              method="post"
+              enctype="multipart/form-data">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" name="disciplinId" value="@d.Id" />
+
+            <div class="mb-3">
+                <label for="titleInput" class="form-label">Заголовок</label>
+                <input type="text" id="titleInput" name="title"
+                       class="form-control" required />
+            </div>
+            <div class="mb-3">
+                <label for="fileInput" class="form-label">Файл</label>
+                <input type="file" id="fileInput" name="file"
+                       class="form-control" required />
+            </div>
+            <button type="submit" class="btn btn-success">
+                Загрузить материал
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- ======== Существующие материалы ======== -->
+@if (!Model.Materials.Any())
+{
+    <div class="container">
+        <p>Материалы ещё не загружены.</p>
+    </div>
+}
+else
+{
+    @foreach (var m in Model.Materials)
+    {
+        <div class="container">
+            <div class="card-header">
+                <strong>@m.Title</strong>
+                <small class="text-muted float-end">@m.UploadedAt.ToString("g")</small>
+            </div>
+            <div class="card-body">
+                <a asp-action="DownloadMaterial"
+                   asp-controller="Disciplin"
+                   asp-route-id="@m.Id"
+                   class="btn btn-link">
+                    Скачать материал
+                </a>
+            </div>
+            <div class="card-footer">
+                <h6>Комментарии:</h6>
+                @if (!m.Comments.Any())
+                {
+                    <p class="text-muted">Комментариев нет.</p>
+                }
+                else
+                {
+                    <ul class="list-unstyled">
+                        @foreach (var c in m.Comments)
+                        {
+                            <li class="mb-1">
+                                <strong>
+                                    @(
+                                      c.Teacher != null
+                                      ? $"{c.Teacher.Surname} {c.Teacher.Name}"
+                                      : "Неизвестный преподаватель")
+                                </strong>
+                                : @c.Text
+                                <br /><small class="text-muted">@c.PostedAt.ToString("g")</small>
+                            </li>
+                        }
+                    </ul>
+                }
+                <form asp-action="PostComment" method="post" class="mt-2">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="materialId" value="@m.Id" />
+                    <div class="input-group">
+                        <input type="text" name="text" class="form-control" placeholder="Ваш комментарий..." required />
+                        <button class="btn btn-primary" type="submit">Отправить</button>
+                    </div>
+                </form>
+            </div>
+            <form asp-controller="Disciplin"
+                  asp-action="DeleteMaterial"
+                  method="post"
+                  class="mt-2">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="materialId" value="@m.Id" />
+                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Вы уверены, что хотите удалить этот материал?');">Удалить материал</button>
+            </form>
+        </div>
+    }
+}

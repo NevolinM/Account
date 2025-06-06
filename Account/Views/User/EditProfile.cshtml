@@ -1,0 +1,85 @@
+﻿@model Account.Models.ProfileViewModel
+@{
+	ViewData["Title"] = "Редактировать профиль";
+}
+
+<header>
+    <h1>Редактирование профиля</h1>
+</header>
+
+<div class="container">
+    <form asp-action="EditProfile"
+          asp-controller="User"
+          method="post"
+          enctype="multipart/form-data">
+        @Html.AntiForgeryToken()
+
+        <!-- Скрытое поле преподавателя -->
+        <input asp-for="Id" type="hidden" />
+        <input asp-for="Login" type="hidden" />
+        <input asp-for="Role" type="hidden" />
+
+        <div class="text-center mb-4">
+            <label for="photoInput" style="cursor:pointer;">
+                <img id="photoPreview"
+                     src="@(Model.PhotoUrl ?? "/images/default-profile.png")"
+                     class="rounded-circle"
+                     style="width:150px;height:150px;object-fit:cover;"
+                     alt="Фото профиля"
+                     title="Нажмите, чтобы изменить фото" />
+            </label>
+            <input asp-for="Photo" type="file" id="photoInput" style="display:none;" />
+            <span asp-validation-for="Photo" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Surname" class="form-label">Фамилия</label>
+            <input asp-for="Surname" class="form-control" />
+            <span asp-validation-for="Surname" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Name" class="form-label">Имя</label>
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Patronymic" class="form-label">Отчество</label>
+            <input asp-for="Patronymic" class="form-control" />
+            <span asp-validation-for="Patronymic" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Email" class="form-label">Email</label>
+            <input asp-for="Email" class="form-control" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Phone" class="form-label">Телефон</label>
+            <input asp-for="Phone" class="form-control" />
+            <span asp-validation-for="Phone" class="text-danger"></span>
+        </div>
+
+        <div class="d-flex justify-content-between mt-4">
+            <!-- Отмена: закрывает popup -->
+            <button type="button" class="btn btn-secondary" onclick="window.close();">
+                Отмена
+            </button>
+            <!-- Сохранить: отправляет форму на POST /User/EditProfile -->
+            <button type="submit" class="btn btn-primary">
+                Сохранить
+            </button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script>
+        document.getElementById('photoInput').addEventListener('change', e => {
+            const [file] = e.target.files;
+            if (file) {
+                document.getElementById('photoPreview').src = URL.createObjectURL(file);
+            }
+        });
+    </script>
+}
