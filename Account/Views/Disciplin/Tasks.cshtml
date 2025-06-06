@@ -29,6 +29,8 @@
            href="@Url.Action("Submissions", "Disciplin", new { id = id })">Работы студентов</a>
         <a class="nav-link @(current == "Report" ? "active" : "")"
            href="@Url.Action("Report", "Disciplin", new { id = id })">Отчетность</a>
+        <a class="nav-link" @(current == "Index" ? "active" : "")"
+           href="@Url.Action("Index", "Journal", new { id = id })">Журнал курса</a>
         <a href="/Home/Courses">Назад к курсам</a>
     </ul>
 </div>

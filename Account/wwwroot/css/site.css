@@ -379,7 +379,7 @@ table.table td {
 @media (max-width: 768px) {
     .courses-grid {
         grid-template-columns: 1fr;
-        margin-left: 10px; /* устран€ем отступ сайдбара, если на мобиле он пр€четс€ */
+        margin-left: 200px;
         margin-right: 10px;
     }
 }
